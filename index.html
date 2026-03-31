@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>電話シミュレーター</title>
+
+<style>
+body {
+  margin: 0;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.phone {
+  width: 300px;
+  background: black;
+  border-radius: 40px;
+  padding: 20px;
+  color: white;
+}
+
+/* 入力画面 */
+.display {
+  height: 80px;
+  font-size: 32px;
+  text-align: center;
+  line-height: 80px;
+}
+
+/* 通話画面 */
+.call-screen {
+  display: none;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.call-number {
+  font-size: 34px;
+  margin-bottom: 20px;
+}
+
+.call-status {
+  color: #aaa;
+  margin-bottom: 30px;
+}
+
+.end-btn {
+  background: #ff3b30;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  border: none;
+  color: white;
+  font-size: 18px;
+}
+
+/* ボタン */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.key {
+  height: 70px;
+  border-radius: 50%;
+  border: none;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.key small {
+  font-size: 10px;
+  color: #aaa;
+}
+
+.call {
+  background: #34c759;
+  grid-column: span 3;
+  border-radius: 35px;
+  height: 60px;
+}
+
+.clear {
+  background: #555;
+  grid-column: span 3;
+  border-radius: 35px;
+  height: 50px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ダイヤル画面 -->
+  <div id="dialScreen">
+    <div class="display" id="display"></div>
+
+    <div class="buttons">
+      <button class="key" onclick="add('1')">1<small></small></button>
+      <button class="key" onclick="add('2')">2<small>ABC</small></button>
+      <button class="key" onclick="add('3')">3<small>DEF</small></button>
+
+      <button class="key" onclick="add('4')">4<small>GHI</small></button>
+      <button class="key" onclick="add('5')">5<small>JKL</small></button>
+      <button class="key" onclick="add('6')">6<small>MNO</small></button>
+
+      <button class="key" onclick="add('7')">7<small>PQRS</small></button>
+      <button class="key" onclick="add('8')">8<small>TUV</small></button>
+      <button class="key" onclick="add('9')">9<small>WXYZ</small></button>
+
+      <button class="key" onclick="add('*')">*</button>
+
+      <!-- 長押し対応 -->
+      <button class="key"
+        onmousedown="startHold()"
+        onmouseup="endHold()"
+        onmouseleave="endHold()"
+        onclick="add('0')">
+        0<small>+</small>
+      </button>
+
+      <button class="key" onclick="add('#')">#</button>
+
+      <button class="call" onclick="call()">発信</button>
+      <button class="clear" onclick="clearDisplay()">クリア</button>
+    </div>
+  </div>
+
+  <!-- 通話画面 -->
+  <div id="callScreen" class="call-screen">
+    <div class="call-number" id="callNumber"></div>
+    <div class="call-status">発信中...</div>
+    <button class="end-btn" onclick="endCall()">終了</button>
+  </div>
+
+</div>
+
+<!-- 音 -->
+<audio id="sound" src="1.mp3"></audio>
+
+<script>
+let number = "";
+let holdTimer = null;
+
+/* 数字入力 */
+function add(n) {
+  number += n;
+  update();
+}
+
+/* 表示更新 */
+function update() {
+  document.getElementById("display").textContent = number;
+}
+
+/* クリア */
+function clearDisplay() {
+  number = "";
+  update();
+}
+
+/* 長押し開始 */
+function startHold() {
+  holdTimer = setTimeout(() => {
+    number += "+";
+    update();
+  }, 600);
+}
+
+/* 長押し終了 */
+function endHold() {
+  clearTimeout(holdTimer);
+}
+
+/* 発信 */
+function call() {
+  if (!number) {
+    alert("番号を入力してください");
+    return;
+  }
+
+  document.getElementById("sound").play();
+
+  document.getElementById("dialScreen").style.display = "none";
+  document.getElementById("callScreen").style.display = "block";
+  document.getElementById("callNumber").textContent = number;
+}
+
+/* 通話終了 */
+function endCall() {
+  document.getElementById("callScreen").style.display = "none";
+  document.getElementById("dialScreen").style.display = "block";
+}
+</script>
+
+</body>
+</html>
